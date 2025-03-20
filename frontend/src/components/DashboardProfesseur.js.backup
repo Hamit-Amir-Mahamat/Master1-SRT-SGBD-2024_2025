@@ -1,0 +1,49 @@
+import React, { useEffect, useState } from "react";
+import api from "../utils/api";
+import { Users, FileText, CheckCircle, BarChart } from "lucide-react";
+import { BarChart as ReBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
+const DashboardProfesseur = () => {
+  const [exercices, setExercices] = useState([]);
+  const [soumissions, setSoumissions] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `Token ${token}` };
+
+      const exercicesResponse = await api.get("exercices/", { headers });
+      const soumissionsResponse = await api.get("soumissions/", { headers });
+
+      setExercices(exercicesResponse.data);
+      setSoumissions(soumissionsResponse.data);
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <div className="p-8">
+      <h1 className="text-4xl font-bold mb-6 text-gray-800">Tableau de Bord Professeur</h1>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold flex items-center">
+            <FileText className="mr-2 text-blue-600" /> Exercices créés
+          </h2>
+          <p className="text-4xl font-bold">{exercices.length}</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold flex items-center">
+            <CheckCircle className="mr-2 text-green-600" /> Exercices corrigés
+          </h2>
+          <p className="text-4xl font-bold">{soumissions.length}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DashboardProfesseur;
+
